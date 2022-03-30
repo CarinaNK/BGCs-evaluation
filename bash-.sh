@@ -4,7 +4,7 @@
 # antismash
 # ucsc fasplit
 
-# clean up.
+# clean up
 
 		rm -r ./subfas
 		rm -r ./anti_out

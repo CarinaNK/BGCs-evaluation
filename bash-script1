@@ -20,9 +20,9 @@ mkdir ./resultsgbs
 mkdir ./vout
 > summary.csv
 
-#split the fasta
+#split the fasta, change gubaphage to your fasta
 
-faSplit byname (input.fa) ./subfas/
+faSplit byname Gubaphage_genomes.fa ./subfas/
 
 # run antismash
 find subfas/ -name "*.fa" | parallel -j 20 'antismash --minimal -c 1 --genefinding-tool prodigal  --output-dir anti_out/{/.} {}  '

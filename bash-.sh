@@ -6,13 +6,13 @@
 
 # clean up.
 
-		rm -r ./subfas
-		rm -r ./anti_out
-		rm -r ./resultsgbs
-		rm -r ./vout
-		rm -r ./sortedfasta
-		rm summary.csv
-		rm combined.fa
+rm -r ./subfas
+rm -r ./anti_out
+rm -r ./resultsgbs
+rm -r ./vout
+rm -r ./sortedfasta
+rm summary.csv
+rm combined.fa
 		
 		
 # make directories

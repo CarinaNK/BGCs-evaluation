@@ -13,14 +13,9 @@ dirpath= format(os.getcwd())
 dirs=next(os.walk('{}/anti_out'.format(dirpath)))[1]
 
 
-
-
-
-
 for f in dirs:
 
    
-
     currentpath="{dpath}/divers/{fil}".format(dpath=dirpath,fil=f)
 
     currentfile=currentpath+'/'+f+'.gbk'
@@ -28,8 +23,6 @@ for f in dirs:
     print (currentpath)
 
     print (currentfile)
-
-   
 
     targetpath=dirpath+'/resultgbs/'
 

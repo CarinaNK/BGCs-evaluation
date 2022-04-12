@@ -14,19 +14,37 @@ dirs=next(os.walk('{}/anti_out'.format(dirpath)))[1]
 
 
 
+
+KCF (Kilian W. Conde-Frieboes)
+12.15 (for 0 minutter siden)
+til mig
+
 for f in dirs:
-  print(f)
-  currentpath="{di}/anti_out/{paths}/{fil}.gbk".format(paths=f,fil=f,di=dirpath)
-  print(currentpath)
-  outputpath="to {}/resultgbs/".format(dirpath)
-  print( outputpath)
-  
-  shutil.copy2("{di}/anti_out/{paths}/{fil}.gbk".format(paths=f,fil=f,di=dirpath), "{}/resultgbs/".format(dirpath))
- 
-  os.remove("{di}/anti_out/{paths}/{fil}.gbk".format(paths=f,fil=f,di=dirpath))
-  os.remove("{di}/anti_out/{paths}/{fil}.json".format(paths=f,fil=f,di=dirpath))
 
+   
 
+    currentpath="{dpath}/divers/{fil}".format(dpath=dirpath,fil=f)
+
+    currentfile=currentpath+'/'+f+'.gbk'
+
+    print (currentpath)
+
+    print (currentfile)
+
+   
+
+    targetpath=dirpath+'/resultgbs/'
+
+    print (targetpath)
+
+    if os.path.isdir(targetpath):
+
+        shutil.copy2(currentfile, targetpath)
+
+    else:
+
+        print ('Target path doesnt exist!')
+        
 for files in  os.listdir('{}/resultgbs'.format(dirpath)):
     name=os.path.splitext('{}'.format(files))[0]
     shutil.copy2("{d}/subfas/{nam}.fa".format(d=dirpath,nam=name), "{}/sortedfasta/".format(dirpath))

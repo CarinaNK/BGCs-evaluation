@@ -22,7 +22,7 @@ for f in dirs:
   onlyfiles = next(os.walk("{dpath}/anti_out/{fil}".format(dpath=dirpath,fil=f)))[2]
   for files in onlyfiles :
       if files.endswith(ext): 
-          record= SeqIO.read("{path}/{dirs}/{fils}".format(path=dirpath,dirs=f,fils=files), "genbank")
+          record= SeqIO.read("{path}/anti_out/{dirs}/{fils}".format(path=dirpath,dirs=f,fils=files), "genbank")
           my_gene=record.features[1]
           produkt=my_gene.qualifiers["product"]
           name=os.path.basename(files)

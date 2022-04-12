@@ -15,9 +15,7 @@ dirs=next(os.walk('{}/anti_out'.format(dirpath)))[1]
 
 
 
-KCF (Kilian W. Conde-Frieboes)
-12.15 (for 0 minutter siden)
-til mig
+
 
 for f in dirs:
 

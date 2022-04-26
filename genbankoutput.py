@@ -16,7 +16,7 @@ dirs=next(os.walk('{}/anti_out'.format(dirpath)))[1]
 for f in dirs:
 
    
-    currentpath="{dpath}/{fil}".format(dpath=dirpath,fil=f)
+    currentpath="{dpath}/anti_out/{fil}".format(dpath=dirpath,fil=f)
 
     currentfile=currentpath+'/'+f+'.gbk'
 

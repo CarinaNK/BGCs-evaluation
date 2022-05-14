@@ -12,7 +12,7 @@ tar -zxf antismash-6.0.0.tar.gz
 pip install ./antismash-6.0.0
 download-antismash-databases
 antismash --check-prereqs
-# update or install any potentially missing prerequisites. 
+- update or install any potentially missing prerequisites. 
 
 # vContact2 installation.
 
@@ -40,5 +40,5 @@ conda activate bigscape
 conda install numpy scipy scikit-learn
 conda install -c bioconda hmmer biopython fasttree
 conda install -c anaconda networkx
-# clone the bigscape Github: https://github.com/medema-group/BiG-SCAPE
+- clone the bigscape Github: https://github.com/medema-group/BiG-SCAPE
 

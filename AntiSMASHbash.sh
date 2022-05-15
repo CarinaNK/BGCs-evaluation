@@ -31,7 +31,7 @@ faSplit byname GPD_sequences.fa ./subfas/
 find subfas/ -name "*.fa" | parallel -j 20 'antismash --minimal -c 1 --genefinding-tool prodigal  --output-dir anti_out/{/.} {}  '
 
 # cleanup
-python3 pythonattempt.py
+python3 Cleanupt.py
 
 # takes all the relevant sequence files and moves them
 python3 genbankoutput.py

@@ -2,6 +2,7 @@
 This pipeline takes a viral metagenome and analyses it for pBGCs. It also goes through clustering and predictions of hosts. The following section encompasses an installation guide for the software used in the pipeline. The installation works in any linux terminal and depends on anaconda being installed in the terminal as well. 
 
 # AntiSMASH installation.
+conda install parralel
 conda create -n antismash  
 conda activate antismash  
 conda install hmmer2 hmmer diamond fasttree prodigal blast muscle glimmerhmm  

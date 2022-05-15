@@ -34,7 +34,7 @@ chmod 755 ~/miniconda3/envs/vContact2/bin/cluster_one-1.0.jar
 
 # Blast
 conda install -c bioconda blast  
-
+wget http://inphared.s3.climb.ac.uk/1Apr2022_genomes.fa
 # Bigscape
 conda create --name bigscape  
 conda activate bigscape  

@@ -45,6 +45,5 @@ cat *.fa > combined.fa
 cd ~
 
 cp /sortedfasta/combined.fa ./
-conda deactivate
 
 		

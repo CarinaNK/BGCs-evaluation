@@ -19,7 +19,7 @@ rm combined.fa
 # make directories
 mkdir ./subfas
 mkdir ./anti_out
-mkdir ./resultsgbs
+mkdir ./resultgbs
 mkdir ./vout
 > summary.csv
 
@@ -38,6 +38,10 @@ python3 genbankoutput.py
 
 # creation of summary file
 python3 summaryfile.py
+
+#move all the relevant fasta
+
+python3 genfas.py
 
 # concatenate fasta
 cd sortedfasta

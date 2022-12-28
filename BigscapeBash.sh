@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ./sortedfasta
-makeblastdb -in -/Apr2022_genomes.fa -dbtype nucl -input_type fasta -out phagDB
+makeblastdb -in ./Apr2022_genomes.fa -dbtype nucl -input_type fasta -out phagDB
 
 rm -r ./blastres
 mkdir ./blastres

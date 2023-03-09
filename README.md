@@ -43,3 +43,11 @@ conda install -c bioconda hmmer biopython fasttree
 conda install -c anaconda networkx  
 - clone the bigscape Github: https://github.com/medema-group/BiG-SCAPE  
 
+# How to utilise this pipeline
+first, you run all the installs to ensure that your programs are working and compatible.
+after this, it is recommended that you retrieve the files and upload them to your server or machine of choice.
+Run the bits of script from the antismash segment first, by copying them into your servers console, 
+preferably in small chunks to be able to resolve any potential errors, note that the final stage might take some time.
+after this run the vcontact script in the same way
+and finally the bash script
+after this the results can be downloaded in whichever way you prefer from your server and the plotting code can be utilised.

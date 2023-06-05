@@ -12,7 +12,7 @@ library(treemap)
 df <- read.csv("C:/Users/cnkho/Downloads/blastres/blastres/combined.txt", header = F, sep="")
 
 # dataframe of phage database
-dfPhag <- read.csv("C:/Users/cnkho/Downloads/phage_data.tsv", "\t", header = T)
+dfPhag <- read.csv(gzfile("C:/Users/cnkho/Downloads/1May2023_data.tsv.gz"), "\t", header = T)
 dfPhag <- dfPhag[, c("Accession", "Genus", "Family", "Order", "Host")]
 
 
@@ -29,26 +29,25 @@ for (i in 1:length(unique(df$V1))){
 
 
 df3<-as.data.frame(df3)
-
 df3 <- df3 %>% distinct()
+write.csv(df3, "C:/Users/cnkho/Downloads/blastres.csv", row.names=FALSE) # use code for cytoscape
 
-write.csv(df3, "C:/Users/cnkho/Downloads/blastres.csv", row.names=FALSE)
-phagtax <- c()
+tax <- c()
 
 # Sort the genomes into their viral Custer and add their phage accession codes
 for(i in 1:length(df$V2)) { 
   
 
-  phagtax <- rbind(phagtax,cbind(dfPhag[dfPhag$Accession %in% df3[i,2],],df3[i,1], df3[i,3])) 
+  tax <- rbind(tax,cbind(dfPhag[dfPhag$Accession %in% df3[i,2],],df3[i,1], df3[i,3])) 
 
 }
 
-phagtax<-as.data.frame(phagtax)
+tax<-as.data.frame(tax)
 
 
 # Filter so only coverage over 2000 bp is contained
-phagtax <- phagtax[phagtax$`df3[i, 3]`>2000,]
-
+phagtax <- tax[tax$`df3[i, 3]`>2000,]
+tax <- tax[tax$`df3[i, 3]`<2000,]
 
 # dataframe of the original study predicted host
 DF <- read.table(file = 'C:/Users/cnkho/Downloads/co_occurrence_analysis.txt', sep = '\t', header = TRUE, fill = TRUE)
@@ -62,6 +61,7 @@ H[which(h2$Host==h1$predicted_host),] # Find identical predictions
 
 # Make dataframe for plots (host)
 host <- as.data.frame(table(unlist(phagtax$Host)))
+host <-rbind(host, data.frame(Var1 = c('No alignment'), Freq = length(tax$Host)))
 host$fraction <- host$Freq / sum(host$Freq)
 
 # mutate(host,
@@ -69,10 +69,11 @@ host$fraction <- host$Freq / sum(host$Freq)
 #          Var1=="Acidithiobacillus" ~ "non-pathogenic",
 #          Var1=="Aeromonas" ~ "pathogenic",
 #          Var1=="Arthrobacter" ~ "neither",
-#          Var1=="Bacillus") ~ "non-pathogenic",
+#          Var1=="Bacillus" ~ "non-pathogenic",
 #          Var1=="Bacteroides" ~ "pathogenic",
 #          Var1=="Burkholderia" ~ "pathogenic",
 #          Var1=="Buttiauxella" ~ "pathogenic",
+#          Var1=="Butyrivibrio" ~ "non-pathogenic",
 #          Var1=="Campylobacter" ~ "neither",
 #          Var1=="Citrobacter" ~ "neither",
 #          Var1=="Clostridioides" ~ "pathogenic",
@@ -112,12 +113,13 @@ host$fraction <- host$Freq / sum(host$Freq)
 #          Var1=="Streptomyces" ~ "neither",
 #          Var1=="Synechococcus" ~ "non-pathogenic", #check maybe
 #          Var1=="Thermus" ~ "non-pathogenic",
-#          Var1=="Unspecified" ~ "neither",
+#          Var1=="Unspecified" ~ "not determined",
 #          Var1=="Vibrio" ~ "neither",
-#          Var1=="wolbachia" ~ "non-pathogenic"
+#          Var1=="wolbachia" ~ "non-pathogenic",
+#          Var1=="No alignment" ~ "not determined"
 #        ))
 
-host <- data.frame(host,state =c("non-pathogenic","pathogenic", "neither","non-pathogenic","pathogenic", "pathogenic","pathogenic","neither", "neither","pathogenic", "pathogenic","pathogenic", "neither","pathogenic","pathogenic","pathogenic","non-pathogenic", "neither","non-pathogenic","non-pathogenic", "pathogenic","pathogenic","neither","pathogenic","non-pathogenic","neither","neither", "neither","neither","non-pathogenic","pathogenic","non-pathogenic", "neither","neither","non-pathogenic","non-pathogenic", "neither","pathogenic","neither","neither","neither","neither","neither", "neither","non-pathogenic","non-pathogenic","neither","neither","non-pathogenic"))
+host <- data.frame(host,state =c("non-pathogenic","pathogenic", "neither","non-pathogenic","pathogenic", "pathogenic","pathogenic","non-pathogenic","neither", "neither","pathogenic", "pathogenic","pathogenic", "neither","pathogenic","pathogenic","pathogenic","non-pathogenic", "neither","non-pathogenic","non-pathogenic", "pathogenic","pathogenic","neither","pathogenic","non-pathogenic","neither","neither", "neither","neither","non-pathogenic","pathogenic","non-pathogenic", "neither","neither","non-pathogenic","non-pathogenic", "neither","pathogenic","neither","neither","neither","neither","neither", "neither","non-pathogenic","non-pathogenic","not determined","neither","non-pathogenic", "not determined"))
 
 
 tm <- treemap(dtf = host,
@@ -148,86 +150,87 @@ ggplot(tm_plot_data, aes(xmin = x0, ymin = y0, xmax = x1, ymax = y1)) +
 
 
 
-
-# Make dataframe for plots (family)
-family <- as.data.frame(table(unlist(phagtax$Family)))
-family$fraction <- family$Freq / sum(family$Freq)
-
-# Cumulative percentages
-family$ymax <- cumsum(family$fraction)
-
-# Bottom of each rectangle
-family$ymin <- c(0, head(family$ymax, n=-1))
-
-# Label position
-family$labelPosition <- (family$ymax + family$ymin) / 2
-
-# Label
-family$label <- paste0(family$Var1, "\n value: ", family$Freq)
-
-# Make the plot
-ggplot(family, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Var1)) +
-  geom_rect() +
-  geom_label_repel( x=3.5, aes(y=labelPosition, label=label), fontface = "bold", size = 3) +
-  #scale_fill_brewer(palette=15) +
-  coord_polar(theta="y") +
-  xlim(c(2, 4)) +
-  theme_void() +
-  theme(legend.position = "right")
-
-# Add label position
-family <- family %>%
-  arrange(desc(family)) %>%
-  mutate(lab.ypos = cumsum(fraction) - 0.5*fraction)
-family
-
-mycols <- c("#FFC20A", "#0C7BDC", "#994F00", "#E1BE6A", '#E66100', '#40B0A6', '#5D3A9B', '#1AFF1A', '#FEFE62', '#4B0092', '#D35FB7', '#D41159', "#DC3220", '#35ab41')
-
-ggplot(family, aes(x = 2, y = fraction, fill = Var1)) +
-  geom_bar(stat = "identity", color = "white") +
-  coord_polar(theta = "y", start = 0)+
-  geom_text(aes(y = lab.ypos, label = Freq), color = "white")+
-  #scale_fill_manual(values = mycols) +
-  theme_void()+
-  xlim(0.5, 2.5)
-
-
-# Make dataframe for plots (order)
-order <- as.data.frame(table(unlist(phagtax$Order)))
-order$fraction <- order$Freq / sum(order$Freq)
-
-# Cumulative percentages 
-order$ymax <- cumsum(order$fraction)
-
-# Bottom of each rectangle
-order$ymin <- c(0, head(order$ymax, n=-1))
-
-# Label position
-order$labelPosition <- (order$ymax + order$ymin) / 2
-
-# Label
-order$label <- paste0(order$Var1, "\n value: ", order$Freq)
-
-# Make the plot
-ggplot(order, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Var1)) +
-  geom_rect() +
-  geom_label_repel( x=3.5, aes(y=labelPosition, label=label), fontface = "bold") +
-  #scale_fill_brewer(palette=16) +
-  coord_polar(theta="y") +
-  xlim(c(2, 4)) +
-  theme_void() +
-  theme(legend.position = "none")
+# 
+# # Make dataframe for plots (family)
+# family <- as.data.frame(table(unlist(phagtax$Family)))
+# family$fraction <- family$Freq / sum(family$Freq)
+# 
+# # Cumulative percentages
+# family$ymax <- cumsum(family$fraction)
+# 
+# # Bottom of each rectangle
+# family$ymin <- c(0, head(family$ymax, n=-1))
+# 
+# # Label position
+# family$labelPosition <- (family$ymax + family$ymin) / 2
+# 
+# # Label
+# family$label <- paste0(family$Var1, "\n value: ", family$Freq)
+# 
+# # Make the plot
+# ggplot(family, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Var1)) +
+#   geom_rect() +
+#   geom_label_repel( x=3.5, aes(y=labelPosition, label=label), fontface = "bold", size = 3) +
+#   #scale_fill_brewer(palette=15) +
+#   coord_polar(theta="y") +
+#   xlim(c(2, 4)) +
+#   theme_void() +
+#   theme(legend.position = "right")
+# 
+# # Add label position
+# family <- family %>%
+#   arrange(desc(family)) %>%
+#   mutate(lab.ypos = cumsum(fraction) - 0.5*fraction)
+# family
+# 
+# mycols <- c("#FFC20A", "#0C7BDC", "#994F00", "#E1BE6A", '#E66100', '#40B0A6', '#5D3A9B', '#1AFF1A', '#FEFE62', '#4B0092', '#D35FB7', '#D41159', "#DC3220", '#35ab41')
+# 
+# ggplot(family, aes(x = 2, y = fraction, fill = Var1)) +
+#   geom_bar(stat = "identity", color = "white") +
+#   coord_polar(theta = "y", start = 0)+
+#   geom_text(aes(y = lab.ypos, label = Freq), color = "white")+
+#   #scale_fill_manual(values = mycols) +
+#   theme_void()+
+#   xlim(0.5, 2.5)
+# 
+# 
+# # Make dataframe for plots (order)
+# order <- as.data.frame(table(unlist(phagtax$Order)))
+# order$fraction <- order$Freq / sum(order$Freq)
+# 
+# # Cumulative percentages 
+# order$ymax <- cumsum(order$fraction)
+# 
+# # Bottom of each rectangle
+# order$ymin <- c(0, head(order$ymax, n=-1))
+# 
+# # Label position
+# order$labelPosition <- (order$ymax + order$ymin) / 2
+# 
+# # Label
+# order$label <- paste0(order$Var1, "\n value: ", order$Freq)
+# 
+# # Make the plot
+# ggplot(order, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Var1)) +
+#   geom_rect() +
+#   geom_label_repel( x=3.5, aes(y=labelPosition, label=label), fontface = "bold") +
+#   #scale_fill_brewer(palette=16) +
+#   coord_polar(theta="y") +
+#   xlim(c(2, 4)) +
+#   theme_void() +
+#   theme(legend.position = "none")
 
 
 # Make dataframe for plots (genus)
 Genus <- as.data.frame(table(unlist(phagtax$Genus)))
+Genus <-rbind(Genus, data.frame(Var1 = c('No alignment'), Freq = length(tax$Genus)))
 Genus$fraction <- Genus$Freq / sum(Genus$Freq)
 
 
 tm <- treemap(dtf = Genus,
               index = c("Var1"),
               vSize = "fraction",
-              vColor = "Var1",
+              vColor = "state",
               title = "")
 
 tm_plot_data <- tm$tm %>%
@@ -236,7 +239,7 @@ tm_plot_data <- tm$tm %>%
   mutate(primary_group = ifelse(is.na(Var1), 1.2, .5)) %>%
   mutate(color = ifelse(is.na(Var1), NA, color))
 
-tm_plot_data$label <- paste0(Genus$Var1, "\n Freq: ", round(Genus$fraction,2))
+tm_plot_data$label <- paste0(tm_plot_data$Var1, "\n Freq: ", round(tm_plot_data$vSize,2))
 
 ggplot(tm_plot_data, aes(xmin = x0, ymin = y0, xmax = x1, ymax = y1)) +
   geom_rect(aes(fill = color, size = primary_group),
@@ -247,6 +250,4 @@ ggplot(tm_plot_data, aes(xmin = x0, ymin = y0, xmax = x1, ymax = y1)) +
   scale_x_continuous(expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0)) +
   theme_void()
-
-
 
